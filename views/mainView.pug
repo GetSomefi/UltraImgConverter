@@ -1,0 +1,29 @@
+doctype html
+html
+  head
+    title= title
+    style
+      include ../css/style.css
+  body
+    header(class="header-section")
+      div(id="load-indicator")
+    div(class="data-container")
+        p(id="rand-location")= randLocation
+        h2(id="top-message2")= title 
+        if msg
+          h1(id="header")= msg
+        else 
+          h1(id="header")
+        div(class="cont-block")
+            label(for="writethis") Write this
+                input(type="text" id="writethis") 
+            button(id="write") Send
+        div(class="cont-block")
+            label(for="convertthis") Convert to WebP
+                input(type="file" accept="image/png, image/jpeg" id="convertthis")
+                span(id="file-upload-indicator")
+                div(id="preview")
+            button(id="convert") Send
+    div(id="content")
+    script
+      include ../js/script.js
