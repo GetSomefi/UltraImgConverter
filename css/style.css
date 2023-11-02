@@ -4,9 +4,6 @@ label, input{
 .cont-block {
     margin-top: 1em;
 }
-img.img-preview {
-    max-height: 150px;
-}
 
 /*load*/
 @keyframes loading {
@@ -41,4 +38,14 @@ span.load {
     display: inline-block;
     position: relative;
     margin-left: 10px;
+}
+
+/*img view*/
+div#preview {
+    display: grid;
+    gap: 1em;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+div#preview img{
+    max-width: 100%;
 }

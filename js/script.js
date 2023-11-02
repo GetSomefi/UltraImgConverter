@@ -53,7 +53,12 @@ const uploadFile = () => {
                 const img = document.createElement("img")
                 img.src = "./static"+randLocation+"/uploads/original_temp.jpg"
                 img.classList = "img-preview";
-                tempView.append(img) //original_temp.jpg
+
+                const contOrig = document.createElement("div");
+                contOrig.classList = "previewImageContainer conv-original";
+                contOrig.appendChild(img);
+
+                tempView.append(contOrig) //original_temp.jpg
 
                 /*stage 2. convert*/
                 const responseUpload = res.json().then((json)=> {
@@ -75,12 +80,22 @@ const uploadFile = () => {
                             const img2 = document.createElement("img")
                             img2.src = "./static"+randLocation+"/uploads/output.webp"
                             img2.classList = "img-preview webp";
-                            tempView.append(img2) //original_temp.jpg
+                            
+                            const contWebp = document.createElement("div");
+                            contWebp.classList = "previewImageContainer conv-webp";
+                            contWebp.appendChild(img2);
+            
+                            tempView.append(contWebp) //.webp
 
                             const img3 = document.createElement("img")
                             img3.src = "./static"+randLocation+"/uploads/output.avif"
                             img3.classList = "img-preview avif";
-                            tempView.append(img3) //original_temp.avif
+
+                            const contAvif = document.createElement("div");
+                            contAvif.classList = "previewImageContainer conv-avif";
+                            contAvif.appendChild(img3);
+            
+                            tempView.append(contAvif) //.avif
                         }
                     });
                 });
