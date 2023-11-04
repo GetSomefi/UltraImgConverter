@@ -1,9 +1,16 @@
+.hide{
+    display: none;
+}
 label, input{
     display: block;
 }
 .cont-block {
     margin-top: 1em;
 }
+
+/* span#file-upload-indicator {
+    font-size: 2em;
+}  */
 
 /*load*/
 @keyframes loading {
@@ -40,6 +47,11 @@ span.load {
     margin-left: 10px;
 }
 
+/*container for converted images*/
+div#content {
+    margin-top: 15px;
+}
+
 /*img view*/
 div#preview {
     display: grid;
@@ -48,4 +60,60 @@ div#preview {
 }
 div#preview img{
     max-width: 100%;
+}
+.previewImageContainer{
+    position: relative;
+}
+.previewImageContainer.conv-original:after,
+.previewImageContainer.conv-webp:after,
+.previewImageContainer.conv-avif:after {
+    content: "Original";
+    position: absolute;
+    left: 0;
+    background: white;
+    padding: 0 10px 5px 0;
+    border-radius: 0 0 5px 0;
+    color: black !important;
+}
+.previewImageContainer.conv-webp:after{
+    content: "WebP";
+}
+.previewImageContainer.conv-avif:after {
+    content: "Avif";
+}
+
+/*upload input*/
+input#convertthis {
+    border: 2px dashed;
+    border-radius: 10px;
+    padding: 80px 10px 10px 10px;
+    width: 200px;
+    position: relative;
+}
+input#convertthis::after {
+    content: "Drag the image here\A🖼️";
+    position: absolute;
+    left: 0;
+    top: 20px;
+    width: 100%;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+a.previewImageContainer{
+    display: flex;
+    justify-content: center;
+}
+a.previewImageContainer:hover::before {
+    content: "💾";
+    width: 100px;
+    height: 100px;
+    z-index: 1;
+    background: #ffffff7a;
+    text-align: center;
+    align-self: center;
+    position: absolute;
+    line-height: 100px;
+    font-size: 40px;
+    border-radius: 100px;
 }

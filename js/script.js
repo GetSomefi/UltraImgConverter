@@ -62,9 +62,9 @@ const uploadFile = () => {
 
                 /*stage 2. convert*/
                 const responseUpload = res.json().then((json)=> {
-                    console.log("jiisoni:",json)
+                    console.log("Upload:",json)
 
-                    const ogFileSize = json[0].file.size / 1000
+                    const ogFileSize = json[0].file.size / 1024 //kt
                     indicator.innerHTML += "<br>Converting (Filesize: "+ogFileSize.toFixed(2)+"kt) (this may take a while) <span class='load'></span>"
                     
                     /*convert part*/
@@ -74,28 +74,42 @@ const uploadFile = () => {
                     }).then( (res)=>{
                         indicator.innerText = "File conversion failed ❌"
                         if(res.ok){
-                            console.log(res.body);
-                            indicator.innerText = "File conversion (Filesize: "+ogFileSize.toFixed(2)+"kt) complete 👍"
+                            const responseConvertion = res.json().then((json)=> {
+                                console.log("Convert:",json)
+                                indicator.innerHTML = "File conversion (Filesize: "+ogFileSize.toFixed(2)+"kt) complete 👍<br>";
 
-                            const img2 = document.createElement("img")
-                            img2.src = "./static"+randLocation+"/uploads/output.webp"
-                            img2.classList = "img-preview webp";
-                            
-                            const contWebp = document.createElement("div");
-                            contWebp.classList = "previewImageContainer conv-webp";
-                            contWebp.appendChild(img2);
-            
-                            tempView.append(contWebp) //.webp
+                                const convertedFiles = json[1];
 
-                            const img3 = document.createElement("img")
-                            img3.src = "./static"+randLocation+"/uploads/output.avif"
-                            img3.classList = "img-preview avif";
+                                convertedFiles.forEach(convFile => {
+                                    const convFileSize = (convFile.size/1024); //kt
+                                    const reduction = -((convFileSize - ogFileSize) / ogFileSize) * 100;
+                                    indicator.innerHTML += "File "+convFile.format+" filesize: "+convFileSize.toFixed(2)+"kt reduction: <b>" + reduction.toFixed(2) + "%</b> <br>";
+                                });
 
-                            const contAvif = document.createElement("div");
-                            contAvif.classList = "previewImageContainer conv-avif";
-                            contAvif.appendChild(img3);
-            
-                            tempView.append(contAvif) //.avif
+                                const img2 = document.createElement("img")
+                                img2.src = "./static"+randLocation+"/uploads/output.webp"
+                                img2.classList = "img-preview webp";
+                                
+                                const contWebp = document.createElement("a");
+                                contWebp.classList = "previewImageContainer conv-webp";
+                                contWebp.href = "./static"+randLocation+"/uploads/output.webp";
+                                contWebp.download = "webp_"+randLocation+".webp";
+                                contWebp.appendChild(img2);
+                
+                                tempView.append(contWebp); //.webp
+
+                                const img3 = document.createElement("img")
+                                img3.src = "./static"+randLocation+"/uploads/output.avif"
+                                img3.classList = "img-preview avif";
+
+                                const contAvif = document.createElement("a");
+                                contAvif.classList = "previewImageContainer conv-avif";
+                                contAvif.href = "./static"+randLocation+"/uploads/output.avif";
+                                contAvif.download = "avif_"+randLocation+".avif";
+                                contAvif.appendChild(img3);
+                
+                                tempView.append(contAvif) //.avif
+                            });
                         }
                     });
                 });
@@ -105,3 +119,4 @@ const uploadFile = () => {
     //,1000);
 }
 document.getElementById("convert").addEventListener("click", uploadFile)
+document.getElementById("convertthis").addEventListener("change", uploadFile)

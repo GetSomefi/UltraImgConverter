@@ -88,4 +88,4 @@ app.listen(process.env.port || portToUse, () => {
   console.clear();
   console.log("Application started and Listening on port " + portToUse);
   console.log("http://localhost:" + portToUse + "/mainView");
-});
+}); 
