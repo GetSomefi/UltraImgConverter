@@ -31,6 +31,11 @@ app.get("/mainView", async (req, res) => { //form creator
 
 //fileupload 
 app.put('/uploadFile', fileTools.upload.single('upload-file'), async function (req, res, next) {
+    
+    if (!req.file) {
+        return res.status(400).json({ error: "No file received!" });
+    }
+
     console.log("File upload started")
     const dataMod = [{
         msg:"File upload complete: " + req.file.originalname,
