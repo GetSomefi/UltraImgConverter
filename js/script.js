@@ -46,12 +46,14 @@ const uploadFile = () => {
             indicator.innerText = "Upload failed ❌"
             if(res.ok){
                 /*stage 1. upload complete*/
-                indicator.innerText = "Done ✔️"
+                indicator.innerText = "✔️ File Uploaded"
                 
                 const tempView = document.getElementById("preview")
 
-                const img = document.createElement("img")
-                img.src = "./static"+randLocation+"/uploads/original_temp.jpg"
+                tempView.replaceChildren();
+
+                const img = document.createElement("img");
+                img.src = `./static${randLocation}/uploads/original_temp.jpg?t=${Date.now()}`;
                 img.classList = "img-preview";
 
                 const contOrig = document.createElement("div");
@@ -75,40 +77,58 @@ const uploadFile = () => {
                         indicator.innerText = "File conversion failed ❌"
                         if(res.ok){
                             const responseConvertion = res.json().then((json)=> {
+
                                 console.log("Convert:",json)
                                 indicator.innerHTML = "File conversion (Filesize: "+ogFileSize.toFixed(2)+"kt) complete 👍<br>";
+
+                                const sizeEl = document.createElement("span");
+                                sizeEl.classList = "filesize-element";
+                                sizeEl.innerText = ogFileSize.toFixed(2)+"kt";
+                                contOrig.appendChild(sizeEl);
 
                                 const convertedFiles = json[1];
 
                                 convertedFiles.forEach(convFile => {
+                                    const convertedImgContainer = document.createElement("div");
+
                                     const convFileSize = (convFile.size/1024); //kt
+                                    
+                                    if(convFile.format == "heif")
+                                        convFile.format = "avif";
+
                                     const reduction = -((convFileSize - ogFileSize) / ogFileSize) * 100;
-                                    indicator.innerHTML += "File "+convFile.format+" filesize: "+convFileSize.toFixed(2)+"kt reduction: <b>" + reduction.toFixed(2) + "%</b> <br>";
-                                });
-
-                                const img2 = document.createElement("img")
-                                img2.src = "./static"+randLocation+"/uploads/output.webp"
-                                img2.classList = "img-preview webp";
+                                    const convertedImgInfo = document.createElement("div");
+                                    //convertedImgInfo.innerHTML += "File "+convFile.format+" filesize: "+convFileSize.toFixed(2)+"kt";
+                                    const reductionBar = document.createElement("div");
+                                    reductionBar.classList = "reduction-bar";
+                                    const reductionAmount = document.createElement("p");
+                                    reductionAmount.classList = "reduction-amount-bar";
+                                    reductionAmount.innerText = `Reduction: ${reduction.toFixed(2)}%`;
+                                    reductionAmount.style.width = `${reduction.toFixed(2)}%`;
+                                    reductionBar.appendChild(reductionAmount);
+                                    convertedImgInfo.appendChild(reductionBar);
                                 
-                                const contWebp = document.createElement("a");
-                                contWebp.classList = "previewImageContainer conv-webp";
-                                contWebp.href = "./static"+randLocation+"/uploads/output.webp";
-                                contWebp.download = "webp_"+randLocation+".webp";
-                                contWebp.appendChild(img2);
-                
-                                tempView.append(contWebp); //.webp
 
-                                const img3 = document.createElement("img")
-                                img3.src = "./static"+randLocation+"/uploads/output.avif"
-                                img3.classList = "img-preview avif";
+                                    const img2 = document.createElement("img")
+                                    img2.src = `./static${randLocation}/uploads/output.${convFile.format}?t=${Date.now()}`;
+                                    img2.classList = `img-preview ${convFile.format}`;
+                                    
+                                    const convertedImg = document.createElement("a");
+                                    convertedImg.classList = `previewImageContainer conv-${convFile.format}`;
+                                    convertedImg.href = `./static${randLocation}/uploads/output.${convFile.format}?t=${Date.now()}`;
+                                    //convertedImg.download = "webp_"+randLocation+".webp";
+                                    convertedImg.download = `${convFile.format}_${randLocation}.${convFile.format}`;
+                                    convertedImg.appendChild(img2);
 
-                                const contAvif = document.createElement("a");
-                                contAvif.classList = "previewImageContainer conv-avif";
-                                contAvif.href = "./static"+randLocation+"/uploads/output.avif";
-                                contAvif.download = "avif_"+randLocation+".avif";
-                                contAvif.appendChild(img3);
-                
-                                tempView.append(contAvif) //.avif
+                                    const convertedSizeEl = sizeEl.cloneNode(true);
+                                    convertedSizeEl.innerText = (convFile.size / 1024).toFixed(2) + "kt";
+                                    convertedImg.appendChild(convertedSizeEl);
+                    
+                                    convertedImgContainer.append(convertedImg);
+                                    convertedImgContainer.append(convertedImgInfo);
+
+                                    tempView.append(convertedImgContainer); //.webp
+                                });
                             });
                         }
                     });
@@ -118,5 +138,5 @@ const uploadFile = () => {
         console.log(m)
     //,1000);
 }
-document.getElementById("convert").addEventListener("click", uploadFile)
+//document.getElementById("convert").addEventListener("click", ()=>uploadFile)
 document.getElementById("convertthis").addEventListener("change", uploadFile)

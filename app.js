@@ -24,7 +24,7 @@ app.get("/mainView", async (req, res) => { //form creator
 
     console.log("Eazy");
     res.render('mainView', { 
-      title: 'Eka tieto', 
+      title: 'Ultra Image Converter (Free)', 
       randLocation:randLocation,
     });
 })

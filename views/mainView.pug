@@ -8,7 +8,6 @@ html
     header(class="header-section")
       div(id="load-indicator")
     div(class="data-container")
-        p(id="rand-location")= randLocation
         h2(id="top-message2")= title 
         if msg
           h1(id="header")= msg
@@ -19,11 +18,17 @@ html
                 input(type="text" id="writethis") 
             button(id="write") Send
         div(class="cont-block")
-            label(for="convertthis") Convert to WebP
+            h3(class="center") Convert to WebP and Avif
+            p(id="file-path")
+            label(id="convertthislabel" for="convertthis" class="center") <span class="button">Browse Files</span><br> or<br>
                 input(type="file" accept="image/png, image/jpeg" id="convertthis")
-                span(id="file-upload-indicator")
+            
             button(id="convert" class="hide") Start
+            span(id="file-upload-indicator")
     div(id="content")
         div(id="preview")
+    p(id="rand-location")= randLocation
     script
       include ../js/script.js
+    script
+      include ../js/draganddrop.js      
