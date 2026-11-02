@@ -52,19 +52,19 @@ const uploadFile = () => {
 
                 tempView.replaceChildren();
 
-                const img = document.createElement("img");
-                img.src = `./static${randLocation}/uploads/original_temp.jpg?t=${Date.now()}`;
-                img.classList = "img-preview";
-
-                const contOrig = document.createElement("div");
-                contOrig.classList = "previewImageContainer conv-original";
-                contOrig.appendChild(img);
-
-                tempView.append(contOrig) //original_temp.jpg
-
                 /*stage 2. convert*/
                 const responseUpload = res.json().then((json)=> {
                     console.log("Upload:",json)
+
+                    const img = document.createElement("img");
+                    img.src = `./static${randLocation}/uploads/${json[0].file.filename}?t=${Date.now()}`;
+                    img.classList = "img-preview";
+
+                    const contOrig = document.createElement("div");
+                    contOrig.classList = "previewImageContainer conv-original";
+                    contOrig.appendChild(img);
+
+                    tempView.append(contOrig) //original_temp.jpg
 
                     const ogFileSize = json[0].file.size / 1024 //kt
                     indicator.innerHTML += "<br>Converting (Filesize: "+ogFileSize.toFixed(2)+"kt) (this may take a while) <span class='load'></span>"

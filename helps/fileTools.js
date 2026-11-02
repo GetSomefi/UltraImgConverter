@@ -1,44 +1,56 @@
 const fs = require("fs");
+const path = require('path');
 const multer  = require('multer')
 const sharp = require('sharp');
 
+let fileNameOriginal;
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './client/uploads')
+        const uploadDir = './client/uploads';
+        
+        // Empty the uploads folder before new down load
+        try {
+            if (fs.existsSync(uploadDir)) {
+                const files = fs.readdirSync(uploadDir);
+                for (const f of files) {
+                    fs.unlinkSync(path.join(uploadDir, f));
+                }
+                console.log("Uploads folder emptied");
+            }
+        } catch (err) {
+            console.error("Error while emptying the folder:", err);
+        }
+
+        cb(null, uploadDir)
     },
     filename: function (req, file, cb) {
-        //console.log(file)
-        //cb(null, file.originalname) //+ file.
-        cb(null, "original_temp.jpg")
-        //convert(file.originalname) 
-        // if(file.mimetype === "image/jpeg"){
-        //     //cb(null, "original_temp.jpg") //+ file.originalname
-        //     convert("original_temp.jpg")
-        // }
-        // if(file.mimetype === "image/png"){
-        //     //cb(null, "original_temp.png") //+ file.originalname
-        //     convert("original_temp.png")
-        // } 
+        //create unique filename
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        fileNameOriginal = `original_temp_${uniqueSuffix}.jpg`;
+        cb(null, fileNameOriginal)
     }
 })
 var upload = multer({ storage: storage })
 
-const convert = async (fileName) => {
+/* 14mb img +  buffer filled memory? */
+const convert = async () => {
     let res = [];
-    const buff = await sharp("./client/uploads/" + fileName).toBuffer()
-    console.log(buff)
-    
-    await sharp(buff)
-    .toFile("./client/uploads/" + 'output.webp')
-    .then( info => { console.log(info); res.push(info); });
+    const filePath = "./client/uploads/" + fileNameOriginal;
 
-    await sharp(buff)
-    .toFormat('heif', { quality: 30, compression: 'av1' })
-    .toFile("./client/uploads/" + 'output.avif')
-    .then(info => {console.log(info); res.push(info);} );
+    const webpInfo = await sharp(filePath)
+        .webp({ quality: 80 })
+        .toFile("./client/uploads/output.webp");
+    console.log(webpInfo);
+    res.push(webpInfo);
+
+    const avifInfo = await sharp(filePath)
+        .toFormat('heif', { quality: 30, compression: 'av1' })
+        .toFile("./client/uploads/output.avif");
+    console.log(avifInfo);
+    res.push(avifInfo);
 
     return res;
-} 
+}
 
 //fileread
 const readFile = async (fileName) => { 
@@ -69,7 +81,7 @@ const writeToFile = async (fileName, procedure = "append", what ) => {
     const _dataContents = await readFile(fileName)
     
     if(!_dataContents.error){
-        const dataContents = JSON.parse(_dataContents)
+        let dataContents = JSON.parse(_dataContents)
         console.log("kontsa enne", dataContents);
 
         if(procedure === "overwrite"){
@@ -133,5 +145,6 @@ module.exports = {
     readFile: (file) => readFile("./data/" + file + ".json"),
     fileContentsToHTML: (file) => fileContentsToHTML(file),
     upload:upload,
-    convert:convert
+    convert:convert,
+    fileNameOriginal: () => {return fileNameOriginal}
 }

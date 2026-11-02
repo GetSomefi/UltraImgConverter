@@ -36,7 +36,7 @@ app.put('/uploadFile', fileTools.upload.single('upload-file'), async function (r
         return res.status(400).json({ error: "No file received!" });
     }
 
-    console.log("File upload started")
+    console.log("File upload started...")
     const dataMod = [{
         msg:"File upload complete: " + req.file.originalname,
         file:req.file,
@@ -51,7 +51,7 @@ app.post('/convertFile', async (req, res) => {
     const dataMod = [{
         msg:"File convert complete",
     }]
-    dataMod.push( await fileTools.convert("original_temp.jpg") )
+    dataMod.push( await fileTools.convert() )
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(dataMod));
     console.log("File convert ended")  
